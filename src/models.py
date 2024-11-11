@@ -3,7 +3,10 @@ from django.db import models
 class Question(models.Model):
     number = models.IntegerField(primary_key=True, null=False)
     id = models.CharField(max_length=8)
+    secret = models.CharField(max_length=8, unique=True, null=False)
+    
     duration = models.IntegerField(default=120)  # in seconds
+    
     statement = models.TextField()
     task = models.TextField()
     exp_output = models.TextField()  # expected output
@@ -23,13 +26,15 @@ class Question(models.Model):
 class Team(models.Model):
     code = models.CharField(max_length=8, primary_key=True)
     name = models.CharField(max_length=20)
-    token = models.CharField(max_length=32, unique=True)  # authentication token
+    token = models.CharField(max_length=32, unique=True, default="")  # authentication token
     question = models.ForeignKey(
         Question,
         to_field='number',
         on_delete=models.DO_NOTHING,
         related_name='teams_got_question',
-        default=0
+        default=1,
+        db_constraint=False,
+        null=True
     )
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -59,13 +64,15 @@ class History(models.Model):
         Team,
         to_field='code',
         on_delete=models.DO_NOTHING,
-        related_name='team_history'
+        related_name='team_history',
+        db_constraint=False,
     )
     score = models.ForeignKey(
         Question,
         to_field='number',
         on_delete=models.DO_NOTHING,
-        related_name='question_history'
+        related_name='question_history',
+        db_constraint=False
     )
     flag = models.CharField(max_length=32, unique=True)
     
@@ -74,4 +81,4 @@ class History(models.Model):
         ordering = ['timestamp']
         
     def __str__(self) -> str:
-        return str(self.team.name) + " - " + str(self.question.number)
+        return str(self.team.name) + " - " + str(self.score.number)
