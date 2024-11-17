@@ -55,7 +55,7 @@ def ontime_flag(team: str, question: int) -> str:
         return flag
         
     else:    
-        raise ValueError(f"Invalid question ID: {question}")  # FIX THIS!
+        raise ValueError(f"Invalid question ID: {question}")
     
 
 

@@ -162,9 +162,9 @@ cython_debug/
 #.idea/
 
 # environment variables file
-.env
+# .env
 
 # Database SSL CA
-ca.pem
+# ca.pem
 
 
