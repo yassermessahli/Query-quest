@@ -26,7 +26,7 @@ class Question(models.Model):
 class Team(models.Model):
     code = models.CharField(max_length=8, primary_key=True)
     name = models.CharField(max_length=20)
-    token = models.CharField(max_length=32, unique=True, default="")  # authentication token
+    token = models.CharField(max_length=32, unique=True, blank=True, null=True, default="")    
     question = models.ForeignKey(
         Question,
         to_field='number',
