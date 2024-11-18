@@ -165,13 +165,18 @@ def check_answer(request, id: str):
 def get_status(request):
     team = request.user
     
+    if team.question:
+        score = team.question.number - 1
+    else:
+        score = Question.objects.all().count()
+    
     try:
         team_history = History.objects.filter(team=team).order_by('timestamp')
 
         return Response({
             'team_code': team.code,
             'team_name': team.name,
-            'actual_score': team.question.number,
+            'actual_score': score,
             'history': [
                 {
                     'timestamp': history.timestamp,
