@@ -165,6 +165,6 @@ cython_debug/
 .env
 
 # Database SSL CA
-# ca.pem
+ca.pem
 
 
