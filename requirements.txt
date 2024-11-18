@@ -3,3 +3,4 @@ djangorestframework==3.15.2
 python-dotenv==1.0.1
 mysqlclient==2.2.6
 gunicorn==23.0.0
+whitenoise==6.8.2
