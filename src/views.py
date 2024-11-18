@@ -13,7 +13,8 @@ import re
 
 @api_view(['GET'])
 def simple_view(request):
-    return Response({"total questions": utils.MAX_QUESTIONS}, status=status.HTTP_200_OK)
+    MAX_QUESTIONS = Question.objects.all().count()
+    return Response({"total questions": MAX_QUESTIONS}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def login(request):
@@ -103,9 +104,10 @@ def check_answer(request, id: str):
         
         if result:
             
-            if question.number == utils.MAX_QUESTIONS:
-                flag = utils.ontime_flag(team.code, utils.MAX_QUESTIONS)
-                score = Question.objects.get(number=utils.MAX_QUESTIONS)
+            MAX_QUESTIONS = Question.objects.all().count()
+            if question.number == MAX_QUESTIONS:
+                flag = utils.ontime_flag(team.code, MAX_QUESTIONS)
+                score = Question.objects.get(number=MAX_QUESTIONS)
 
                 history = History(team=team, score=score, flag=flag)
                 team.question = None
@@ -116,7 +118,7 @@ def check_answer(request, id: str):
                 return Response({
                     'result': 'Completed',
                     'flag': flag,
-                    'score': utils.MAX_QUESTIONS,
+                    'score': MAX_QUESTIONS,
                 }, status=status.HTTP_200_OK)
             
             else:

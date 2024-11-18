@@ -3,19 +3,6 @@ import hashlib
 from .models import Question
 
 
-# Maximum number of questions
-try:  # to handle not existing table yets
-    MAX_QUESTIONS = Question.objects.last().number
-except (Question.DoesNotExist, Exception):
-    MAX_QUESTIONS = 0
-
-# Secret keys for Flag generation
-try:
-    SECRET_KEYS = {question.number:question.secret for question in Question.objects.all()}
-except (Question.DoesNotExist, Exception):
-    SECRET_KEYS = {}
-
-
 
 def chech_with_LLM(question: Question, answer: str) -> bool:
     """
@@ -43,8 +30,8 @@ def ontime_flag(team: str, question: int) -> str:
         str: Generated flag in format: 32-characters long hexadecimal string
     """
 
-    secret = SECRET_KEYS.get(question, None)
-    if secret:
+    try:
+        secret = Question.objects.get(number=question).secret
         # Combine team_code and secret_key
         data = team + secret
     
@@ -54,7 +41,7 @@ def ontime_flag(team: str, question: int) -> str:
     
         return flag
         
-    else:    
+    except Question.DoesNotExist:    
         raise ValueError(f"Invalid question ID: {question}")
     
 
