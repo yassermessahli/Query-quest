@@ -31,10 +31,7 @@ DEBUG = True
 # Deployment settings
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME', None)
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1'    
-]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
@@ -49,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'src'
+    'src',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +119,13 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,  # Adjust the page size as needed
+    
 }
 
 
@@ -164,7 +168,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Enable this for production
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

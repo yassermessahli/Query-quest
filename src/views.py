@@ -2,12 +2,44 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Team, Question, History
-from . import utils
 from .authentication import SingleSessionAuthentication, generate_token
+from .serializers import TeamSerializer, QuestionSerializer, HistorySerializer
+from . import utils
 
 import re
+
+
+class TeamGenericView(ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    lookup_field = 'code'
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['name', 'question__number']
+    ordering_fields = ['question__number', 'name']
+    pagination_class = PageNumberPagination
+
+class QuestionGenericView(ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+    lookup_field = 'number'
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['duration', 'number', 'statement', 'task', 'exp_output', 'typical_answer']
+    ordering_fields = ['duration', 'number', 'updated_at']
+    pagination_class = PageNumberPagination
+
+class HistoryGenericView(ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView):
+    queryset = History.objects.all()
+    serializer_class = HistorySerializer
+    lookup_field = ['team', 'score']
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['timestamp', 'team__name', 'score__number', 'flag']
+    ordering_fields = ['timestamp', 'score__number']
+    pagination_class = PageNumberPagination
 
 
 

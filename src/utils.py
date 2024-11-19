@@ -2,6 +2,8 @@
 import hashlib
 from .models import Question
 
+from openai import OpenAI
+
 
 
 def chech_with_LLM(question: Question, answer: str) -> bool:
@@ -15,6 +17,16 @@ def chech_with_LLM(question: Question, answer: str) -> bool:
     Returns:
         bool: True if answer is correct, False otherwise
     """
+    statement = question.statement
+    task = question.task
+    exp_output = question.exp_output
+    
+    prompt = f"{statement}\n\n{task}\n\n{answer}"
+    
+    
+    
+    
+    
     return True
 
 
