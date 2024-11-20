@@ -4,11 +4,30 @@ from datetime import datetime
 import sys
 import os
 from dotenv import load_dotenv
+import random
+import string
 
+
+DOT_ENV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'server', '.env') # edit this when needed
+
+
+
+def getid(way: str = 'M'):
+    if way == 'D':
+        characters = string.digits
+    elif way == 'C':
+        caracters = string.ascii_lowercase + string.ascii_uppercase
+    elif way == 'M':
+        characters = string.digits + string.ascii_lowercase
+    else:
+        raise ValueError("Invalid way argument")
+
+    question_id = ''.join(random.choice(characters) for _ in range(8))
+    return question_id
 
 def connect_to_database():
     """Establish connection to MySQL database"""
-    load_dotenv()
+    load_dotenv(DOT_ENV_PATH)
     connection = connector.connect(
         host=os.getenv('DB_HOST'),
         port=os.getenv('DB_PORT'),
@@ -39,13 +58,13 @@ def insert_questions(cursor, questions_data):
     
     for question in questions_data:
         values = (
-            question.get('number', 1),  # default 1 if not specified
-            question.get('id', ''),  # empty string if not specified
-            question.get('secret', ''),  # empty string if not specified
+            question.get('number', None),  # default NULL if not specified
+            question.get('id', getid()),  # empty string if not specified
+            question.get('secret', getid('D')),  # empty string if not specified
             question.get('duration', 120),  # default 120 if not specified
             question.get('statement', ''),
             question.get('task', ''),
-            question.get('exp_output', ''),
+            question.get('expected_output', ''),
             question.get('typical_answer', ''),
             current_time,
             current_time
@@ -64,7 +83,7 @@ def insert_teams(cursor, teams_data):
     
     for team in teams_data:
         values = (
-            team.get('code', ''),  # empty string if not specified
+            team.get('code', getid('D')),  # random id string if not specified
             team.get('name', ''),
             team.get('token', ''),  # empty string if not specified
             team.get('question', 1),  # default to 1 if not specified
@@ -76,11 +95,11 @@ def insert_teams(cursor, teams_data):
 def main():
     # Command line arguments for file paths
     if len(sys.argv) == 3:
-        teams_file = sys.argv[1]
-        questions_file = sys.argv[2]
+        questions_file = sys.argv[1]
+        teams_file = sys.argv[2]
     elif len(sys.argv) == 2:
-        teams_file = sys.argv[1]
-        questions_file = None
+        questions_file = sys.argv[1]
+        teams_file = None
     else:
         print("Usage: python database_population.py <teams_file> [questions_file]")
         sys.exit(1)
