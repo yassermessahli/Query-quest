@@ -1,0 +1,82 @@
+[
+   {
+      "number": 21,
+      "duration": 300,
+      "statement": "A data scientist is working with normalized data and needs to predict coefficients using Ridge regression. They have prepared their feature matrix X and target variable y, and want to use a penalty term (alpha) of 1.",
+      "task": "Predict the coefficients of a Ridge regression model trained on normalized data with a penalty term of 1.",
+      "expected_output": "An array of coefficients.\nExample: [-0.5, 0.3, 0.8]",
+      "typical_answer": "from sklearn.linear_model import Ridge\nmodel = Ridge(alpha=1).fit(X, y)\nmodel.coef_"
+   },
+   {
+      "number": 22,
+      "duration": 300,
+      "statement": "A telecom company has collected customer data and wants to understand which factors contribute most to customer churn. They have prepared a dataset with various customer features and churn status.",
+      "task": "Identify the most important feature in a Random Forest classifier trained on a customer churn dataset.",
+      "expected_output": "The name of the feature with the highest importance score.\nExample: 'monthly_charges'",
+      "typical_answer": "model = RandomForestClassifier().fit(X, y)\nX.columns[model.feature_importances_.argmax()]"
+   },
+   {
+      "number": 23,
+      "duration": 300,
+      "statement": "A marketing analyst has a high-dimensional customer behavior dataset and needs to visualize it in 2D for better understanding of customer segments.",
+      "task": "Reduce the dimensionality of a dataset to 2 principal components.",
+      "expected_output": "Transformed data with 2 features.\nShape: (n_samples, 2)",
+      "typical_answer": "from sklearn.decomposition import PCA\nPCA(n_components=2).fit_transform(X)"
+   },
+   {
+      "number": 24,
+      "duration": 300,
+      "statement": "A fraud detection team needs to identify suspicious transactions in their dataset. They estimate that about 5% of transactions might be fraudulent.",
+      "task": "Flag rows as anomalies using an Isolation Forest trained with 5% contamination.",
+      "expected_output": "An array of 1s and -1s, where -1 indicates an anomaly.\nExample: [1, 1, -1, 1, -1]",
+      "typical_answer": "from sklearn.ensemble import IsolationForest\nIsolationForest(contamination=0.05).fit_predict(X)"
+   },
+   {
+      "number": 25,
+      "duration": 400,
+      "statement": "A machine learning engineer is building a decision tree model for customer classification and needs to find the optimal tree depth.",
+      "task": "Find the best max_depth for a Decision Tree classifier using GridSearchCV.",
+      "expected_output": "The optimal max_depth value.\nExample: 4",
+      "typical_answer": "from sklearn.model_selection import GridSearchCV\nGridSearchCV(DecisionTreeClassifier(), {'max_depth': [2, 4, 6]}).fit(X, y).best_params_['max_depth']"
+   },
+   {
+      "number": 26,
+      "duration": 200,
+      "statement": "A data analyst wants to capture non-linear relationships in their housing price prediction model by including polynomial terms of a feature.",
+      "task": "Expand a single feature column to include polynomial terms up to degree 3.",
+      "expected_output": "A matrix with original, squared, and cubed terms of the feature.\nShape: (n_samples, 3)",
+      "typical_answer": "from sklearn.preprocessing import PolynomialFeatures\nPolynomialFeatures(degree=3).fit_transform(X)"
+   },
+   {
+      "number": 27,
+      "duration": 300,
+      "statement": "A data scientist wants to evaluate the performance of their logistic regression model using cross-validation to ensure robust results.",
+      "task": "Compute the cross-validation accuracy score for a Logistic Regression model with 5 folds.",
+      "expected_output": "A single number representing the mean accuracy.\nExample: 0.85",
+      "typical_answer": "from sklearn.model_selection import cross_val_score\ncross_val_score(LogisticRegression(), X, y, cv=5).mean()"
+   },
+   {
+      "number": 28,
+      "duration": 300,
+      "statement": "A marketing team has clustered their customer base into 3 segments and wants to evaluate if the clustering makes sense.",
+      "task": "Evaluate the quality of clustering for a K-Means model with 3 clusters using the silhouette score.",
+      "expected_output": "A silhouette score between -1 and 1.\nExample: 0.68",
+      "typical_answer": "from sklearn.metrics import silhouette_score\nsilhouette_score(X, KMeans(n_clusters=3).fit_predict(X))"
+   },
+   {
+      "number": 29,
+      "duration": 200,
+      "statement": "A healthcare team has developed a disease prediction model and wants to understand its performance in terms of true/false positives and negatives.",
+      "task": "Generate a confusion matrix for predictions made by a classification model.",
+      "expected_output": "A 2x2 matrix representing the confusion matrix.\nExample: [[45, 5], [3, 47]]",
+      "typical_answer": "from sklearn.metrics import confusion_matrix\nconfusion_matrix(y_true, y_pred)"
+   },
+   {
+      "number": 30,
+      "duration": 400,
+      "statement": "A data scientist needs to create a reusable pipeline that standardizes the features and trains an SVM classifier.",
+      "task": "Build a pipeline that scales the data and trains a Support Vector Classifier (SVC).",
+      "expected_output": "A fitted pipeline object that can transform new data and make predictions.",
+      "typical_answer": "from sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nmake_pipeline(StandardScaler(), SVC()).fit(X, y)"
+   }
+]

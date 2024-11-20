@@ -1,0 +1,82 @@
+[
+    {
+       "number": 1,
+       "duration": 120,
+       "statement": "A data analyst at an e-commerce company needs to analyze their sales data. They have a dataset containing information about different items sold, including the item name, price, and quantity sold.\n| item | price | quantity |\n| --- | --- | --- |\n| A | 10 | 2 |\n| B | 20 | 3 |\n| C | 5 | 1 |",
+       "task": "Create a new column 'revenue' by multiplying 'price' and 'quantity'",
+       "expected_output": "| item | price | quantity | revenue |\n| --- | --- | --- | --- |\n| A | 10 | 2 | 20 |\n| B | 20 | 3 | 60 |\n| C | 5 | 1 | 5 |",
+       "typical_answer": "df['revenue'] = df['price'] * df['quantity']"
+    },
+    {
+       "number": 2,
+       "duration": 180,
+       "statement": "A retail company wants to visualize their sales performance across different product categories. They have collected sales data over time and want to understand the total sales for each category.\n| category | sales |\n| --- | --- |\n| A | 100 |\n| A | 200 |\n| B | 150 |",
+       "task": "Group and sum sales by category, then create a bar plot of the aggregated sales",
+       "expected_output": "| category | sales |\n| --- | --- |\n| A | 300 |\n| B | 150 |\n\nAlong with a bar plot showing total sales for each category",
+       "typical_answer": "agg_df = df.groupby('category')['sales'].sum().reset_index()\nsns.barplot(x='category', y='sales', data=agg_df)"
+    },
+    {
+       "number": 3,
+       "duration": 150,
+       "statement": "An educational institution wants to analyze student performance data. They have collected test scores from a recent examination and need to calculate basic statistical measures.\n| score |\n| --- |\n| 85 |\n| 90 |\n| 75 |",
+       "task": "Calculate the mean, median, and standard deviation of the scores",
+       "expected_output": "{\n  'mean': 83.33,\n  'median': 85.0,\n  'std_dev': 7.64\n}",
+       "typical_answer": "stats = {\n    'mean': df['score'].mean(),\n    'median': df['score'].median(),\n    'std_dev': df['score'].std()\n}"
+    },
+    {
+       "number": 4,
+       "duration": 160,
+       "statement": "A market research team needs to normalize price data for better comparison across different product categories. They have raw price data that needs to be scaled to a 0-1 range.\n| price |\n| --- |\n| 100 |\n| 200 |\n| 150 |",
+       "task": "Scale the prices to a 0-1 range using MinMaxScaler",
+       "expected_output": "| price | price_scaled |\n| --- | --- |\n| 100 | 0.0 |\n| 200 | 1.0 |\n| 150 | 0.5 |",
+       "typical_answer": "from sklearn.preprocessing import MinMaxScaler\ndf['price_scaled'] = MinMaxScaler().fit_transform(df[['price']])"
+    },
+    {
+       "number": 5,
+       "duration": 200,
+       "statement": "A real estate company wants to build a simple model to predict house prices based on house size. They have collected data on house sizes and their corresponding prices.\n| size | price |\n| --- | --- |\n| 1000 | 200000 |\n| 1500 | 300000 |\n| 2000 | 400000 |",
+       "task": "Prepare the data and fit a linear regression model to predict house prices based on size",
+       "expected_output": "Model coefficients and intercept showing the relationship between house size and price:\ncoefficient: array([200.0]), intercept: 0.0",
+       "typical_answer": "X = df[['size']]\ny = df['price']\nmodel = LinearRegression().fit(X, y)\ncoef, intercept = model.coef_[0], model.intercept_"
+    },
+    {
+       "number": 6,
+       "duration": 180,
+       "statement": "A botanist wants to build a classification model to identify different species of iris flowers based on their measurements. They will use the famous iris dataset and need to evaluate the model's performance.",
+       "task": "Prepare the iris dataset, train a KNN classifier, and evaluate its accuracy",
+       "expected_output": "Model accuracy score (e.g., 0.967) showing how well the classifier performs on the test set",
+       "typical_answer": "from sklearn.model_selection import train_test_split\nfrom sklearn.neighbors import KNeighborsClassifier\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)\nmodel = KNeighborsClassifier(n_neighbors=3).fit(X_train, y_train)\naccuracy = accuracy_score(y_test, model.predict(X_test))"
+    },
+    {
+       "number": 7,
+       "duration": 140,
+       "statement": "A data scientist wants to understand the relationships between different numerical variables in their dataset. They need to calculate correlations between all pairs of numeric columns.\n| A | B | C |\n| --- | --- | --- |\n| 1 | 2 | 3 |\n| 2 | 3 | 4 |\n| 3 | 4 | 5 |",
+       "task": "Calculate the correlation matrix for all numeric columns",
+       "expected_output": "A correlation matrix showing values between -1 and 1 for all pairs of numeric columns",
+       "typical_answer": "correlation_matrix = df.select_dtypes(include=['float64', 'int64']).corr()"
+    },
+    {
+       "number": 8,
+       "duration": 150,
+       "statement": "A marketing team needs to prepare their data for machine learning analysis. They have categorical data about cities that needs to be converted to a numeric format.\n| city |\n| --- |\n| NY |\n| LA |\n| NY |",
+       "task": "Convert the city column to dummy variables using one-hot encoding",
+       "expected_output": "| city_LA | city_NY |\n| --- | --- |\n| 0 | 1 |\n| 1 | 0 |\n| 0 | 1 |",
+       "typical_answer": "df_encoded = pd.get_dummies(df, columns=['city'])"
+    },
+    {
+       "number": 9,
+       "duration": 130,
+       "statement": "A machine learning engineer needs to prepare their dataset for model training. They need to split their data into training and testing sets while maintaining the proper distribution of the target variable.",
+       "task": "Split the dataset into training and testing sets with an 80-20 split ratio",
+       "expected_output": "Four datasets: X_train, X_test, y_train, y_test with proper 80-20 split",
+       "typical_answer": "X_train, X_test, y_train, y_test = train_test_split(df.drop(columns=[target_col]), df[target_col], test_size=0.2)"
+    },
+    {
+       "number": 10,
+       "duration": 160,
+       "statement": "A time series analyst needs to extract meaningful features from date information for their analysis. They have a dataset with dates and need to break them down into components.\n| date |\n| --- |\n| 2024-01-01 |\n| 2024-02-15 |",
+       "task": "Extract year, month, and day from the dates column",
+       "expected_output": "| date | Year | Month | Day |\n| --- | --- | --- | --- |\n| 2024-01-01 | 2024 | 1 | 1 |\n| 2024-02-15 | 2024 | 2 | 15 |",
+       "typical_answer": "df['Year'] = pd.to_datetime(df['date']).dt.year\ndf['Month'] = pd.to_datetime(df['date']).dt.month\ndf['Day'] = pd.to_datetime(df['date']).dt.day"
+    }
+ ]
