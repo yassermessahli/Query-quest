@@ -132,7 +132,7 @@ def check_answer(request, id: str):
             )
 
         question = team.question
-        result = utils.chech_with_LLM(question, answer)
+        result = utils.validate_answer(question, answer)
         
         if result:
             

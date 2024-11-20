@@ -1,34 +1,15 @@
 # utils.py: utility functions
 import hashlib
 from .models import Question
+from .question_validation import LLMChecker
 
 from openai import OpenAI
+import os
+from dotenv import load_dotenv
 
 
-
-def chech_with_LLM(question: Question, answer: str) -> bool:
-    """
-    Check if the answer (input code) is correct using Language Model.
-    
-    Args:
-        question (Question): Question object
-        answer (str): Answer provided by the team
-        
-    Returns:
-        bool: True if answer is correct, False otherwise
-    """
-    statement = question.statement
-    task = question.task
-    exp_output = question.exp_output
-    
-    prompt = f"{statement}\n\n{task}\n\n{answer}"
-    
-    
-    
-    
-    
-    return True
-
+def validate_answer(question, answer: str) -> bool:
+    return LLMChecker().check_with_llm(question, answer)
 
 def ontime_flag(team: str, question: int) -> str:
     """
