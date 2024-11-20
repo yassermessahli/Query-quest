@@ -1,11 +1,14 @@
-import json
 from mysql import connector
 from datetime import datetime
-import sys
-import os
 from dotenv import load_dotenv
+import argparse
+import json
+import sys
 import random
 import string
+import os
+
+
 
 
 DOT_ENV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'server', '.env') # edit this when needed
@@ -85,37 +88,44 @@ def insert_teams(cursor, teams_data):
         values = (
             team.get('code', getid('D')),  # random id string if not specified
             team.get('name', ''),
-            team.get('token', ''),  # empty string if not specified
+            team.get('token', getid('M')*4),  # empty string if not specified
             team.get('question', 1),  # default to 1 if not specified
             current_time,
             current_time
         )
         cursor.execute(team_query, values)
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Populate database with questions and/or teams from JSON files')
+    parser.add_argument('-q', '--questions', help='Path to questions JSON file', type=str)
+    parser.add_argument('-t', '--teams', help='Path to teams JSON file', type=str)
+    args = parser.parse_args()
+    return args
+
+
 def main():
-    # Command line arguments for file paths
-    if len(sys.argv) == 3:
-        questions_file = sys.argv[1]
-        teams_file = sys.argv[2]
-    elif len(sys.argv) == 2:
-        questions_file = sys.argv[1]
-        teams_file = None
-    else:
-        print("Usage: python database_population.py <teams_file> [questions_file]")
-        sys.exit(1)
-    
+    # Parse command-line arguments
+    args = parse_arguments()
+
     # Connect to database
     connection = connect_to_database()
     cursor = connection.cursor()
     
     try:
-        if questions_file:
-            questions_data = load_json_file(questions_file)
-            insert_questions(cursor, questions_data)
-            
-        if teams_file:
-            teams_data = load_json_file(teams_file)
-            insert_teams(cursor, teams_data)
+        # Only attempt to load and insert if the respective argument is provided
+        try:
+            if args.questions:
+                questions_data = load_json_file(args.questions)
+                insert_questions(cursor, questions_data)
+        except AttributeError:
+            pass
+        
+        try:
+            if args.teams:
+                teams_data = load_json_file(args.teams)
+                insert_teams(cursor, teams_data)
+        except AttributeError:
+            pass
         
         # Commit changes
         connection.commit()
