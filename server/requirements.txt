@@ -6,3 +6,4 @@ mysql-connector-python==9.1.0
 gunicorn==23.0.0
 whitenoise==6.8.2
 openai==1.54.4
+django-cors-headers==4.6.0
