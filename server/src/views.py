@@ -81,7 +81,7 @@ def login(request):
             {'error': 'Team not registered'}, 
             status=status.HTTP_404_NOT_FOUND
         )
-    except Question.DoesNotExist:
+    except AttributeError:
         return Response(
             {'error': 'Team has completed all questions'}, 
             status=status.HTTP_404_NOT_FOUND
