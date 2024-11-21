@@ -86,6 +86,11 @@ def login(request):
             {'error': 'Team has completed all questions'}, 
             status=status.HTTP_404_NOT_FOUND
         )
+    except Exception:
+        return Response(
+            {'error': "An Error Occurred! Please try again."}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -123,11 +128,6 @@ def check_answer(request, id: str):
     team = request.user
     answer = request.data.get('answer', None)
     
-    if not answer:
-        return Response(
-            {'error': 'Answer not provided'}, 
-            status=status.HTTP_400_BAD_REQUEST
-        )
 
     try:
         if team.question.id != id:
@@ -137,7 +137,10 @@ def check_answer(request, id: str):
             )
 
         question = team.question
-        result = utils.validate_answer(question, answer)
+        if answer is None:
+            result = False
+        else:
+            result = utils.validate_answer(question, answer)
         
         if result:
             
