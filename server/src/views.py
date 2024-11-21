@@ -81,6 +81,11 @@ def login(request):
             {'error': 'Team not registered'}, 
             status=status.HTTP_404_NOT_FOUND
         )
+    except Question.DoesNotExist:
+        return Response(
+            {'error': 'Team has completed all questions'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
