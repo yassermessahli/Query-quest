@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-s=u9z*j++0z)4_g02!#jp7$crvb@8kq!zx(j@-2msd!75jk^oj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False # Change this to False for production
+DEBUG = True # Change this to False for production
 
 # Deployment settings
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME', None)
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
     'src',

@@ -12,7 +12,7 @@ class LLMConfig:
     model: str = "gpt-4o-mini"  # Updated to a more recent model
     temperature: float = 0.2
     max_tokens: int = 1
-    max_retries: int = 3
+    max_retries: int = 5
     personality: str = """You are an expert in data science and Python programming with extensive 
     experience in code review. Your task is to evaluate Python code solutions for data science 
     challenges. You must respond ONLY with 'True' for correct solutions or 'False' for incorrect ones, 
