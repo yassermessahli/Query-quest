@@ -108,7 +108,6 @@ def get_question(request, id: str):
                 'statement': question.statement,
                 'task': question.task,
                 'exp_output': question.exp_output,
-                'typical_answer': question.typical_answer,
             }, status=status.HTTP_200_OK)
         else:
             return Response(
