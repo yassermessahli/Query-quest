@@ -183,9 +183,9 @@ def check_answer(request, id: str):
                 'next_question_id': team.question.id,
             }, status=status.HTTP_200_OK)
         
-    except AttributeError:
+    except AttributeError as e:
         return Response(
-            {'error': 'Team passed all questions'}, 
+            {'error': e}, 
             status=status.HTTP_404_NOT_FOUND
         )
         
