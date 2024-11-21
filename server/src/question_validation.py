@@ -31,9 +31,8 @@ class LLMChecker:
         load_dotenv()
         self.config = config or LLMConfig()
         # # REMOVE THIS BELOW IN PRODUCTION!!!!!
-        self.api_key = "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"
         # AND ADD THIS INSTEAD!
-        # self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise ValueError("OpenAI API key not found in environment variables")
         self.agent = OpenAI(api_key=self.api_key)
