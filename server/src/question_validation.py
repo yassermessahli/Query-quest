@@ -49,7 +49,9 @@ class LLMChecker:
         SUBMITTED SOLUTION:
         {answer}
         
-        Respond only with 'True' or 'False'. you can accept the code if the syntax error is too small
+        ===========
+        Respond only with 'True' or 'False'. you can accept the code if the syntax error is small
+        NOTE: do not be that strict, consider the user's effort and the logic behind the code.
         """
 
     def _validate_question(self, question) -> None:
