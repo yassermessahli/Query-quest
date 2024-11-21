@@ -1,82 +1,138 @@
 [
-    {
-       "number": 11,
-       "duration": 180,
-       "statement": "A data quality team at an e-commerce platform needs to identify and handle price outliers in their product database. They suspect some prices might be incorrectly entered and need a systematic way to detect and clean this data.\n| price |\n| --- |\n| 100 |\n| 150 |\n| 1000 |\n| 120 |",
-       "task": "Calculate the IQR bounds for outlier detection and replace any outliers with the median value of the dataset",
-       "expected_output": "First output (bounds):\n{\n    'Q1': 110,\n    'Q3': 575,\n    'IQR': 465,\n    'lower_bound': -587.5,\n    'upper_bound': 1272.5\n}\n\nSecond output (cleaned data):\n| price |\n| --- |\n| 100 |\n| 150 |\n| 135 |\n| 120 |",
-       "typical_answer": "# Calculate bounds\nbounds = {\n    'Q1': df['price'].quantile(0.25),\n    'Q3': df['price'].quantile(0.75),\n    'IQR': df['price'].quantile(0.75) - df['price'].quantile(0.25)\n}\nbounds['lower_bound'] = bounds['Q1'] - 1.5 * bounds['IQR']\nbounds['upper_bound'] = bounds['Q3'] + 1.5 * bounds['IQR']\n\n# Replace outliers\ndf['price'] = df['price'].mask(\n    (df['price'] < bounds['lower_bound']) | \n    (df['price'] > bounds['upper_bound']),\n    df['price'].median())"
-    },
-    {
-       "number": 12,
-       "duration": 150,
-       "statement": "A financial analyst needs to understand the distribution characteristics of stock prices to identify potential investment opportunities. They need to analyze the shape and properties of the price distribution.\n\nSample price data shows varying patterns of distribution that could indicate market behavior.",
-       "task": "Calculate key distribution statistics (mean, skewness, kurtosis) and create a visualization of the price distribution",
-       "expected_output": "Statistics output:\n{\n    'mean': 150.0,\n    'skewness': 0.75,\n    'kurtosis': 2.1,\n    'distribution_type': 'right-skewed'\n}\n\nAlong with a figure showing histogram and density plot of the price distribution",
-       "typical_answer": "# Calculate statistics\nstats = {\n    'mean': df['price'].mean(),\n    'skewness': df['price'].skew(),\n    'kurtosis': df['price'].kurtosis(),\n    'distribution_type': 'right-skewed' if df['price'].skew() > 0 else 'left-skewed'\n}\n\n# Create visualization\nsns.histplot(data=df, x='price', kde=True)"
-    },
-    {
-       "number": 13,
-       "duration": 240,
-       "statement": "A telecommunications company wants to predict which customers are likely to churn. They have historical data including customer age, contract length, monthly spending, and whether they churned.\n| age | contract_length | monthly_spend | churn |\n| --- | --- | --- | --- |\n| 25 | 12 | 50.0 | 0 |\n| 35 | 24 | 75.0 | 1 |",
-       "task": "Prepare features for churn prediction and train a logistic regression model to predict customer churn",
-       "expected_output": "Model performance metrics:\n{\n    'accuracy': 0.85,\n    'feature_importance': {\n        'age': 0.2,\n        'contract_length': 0.5,\n        'monthly_spend': 0.3\n    }\n}",
-       "typical_answer": "# Prepare features\nX = df[['age', 'contract_length', 'monthly_spend']]\ny = df['churn']\n\n# Scale features\nX_scaled = StandardScaler().fit_transform(X)\n\n# Train model\nmodel = LogisticRegression()\nmodel.fit(X_scaled, y)\n\n# Get importance\nfeature_importance = dict(zip(X.columns, abs(model.coef_[0])))"
-    },
-    {
-       "number": 14,
-       "duration": 210,
-       "statement": "A bank wants to automate their loan approval process using machine learning. They need to understand which factors are most important in loan approval decisions and predict approval probabilities for new applications.\n\nThe dataset contains applicant information including income, credit score, and years of employment.",
-       "task": "Calculate feature importance for loan approval and implement a probability prediction system",
-       "expected_output": "Feature importance:\n{\n    'income': 0.45,\n    'credit_score': 0.35,\n    'employment_years': 0.20\n}\n\nPredictions:\n| probability_approved |\n| --- |\n| 0.85 |\n| 0.35 |\n| 0.92 |",
-       "typical_answer": "# Calculate feature importance\nmodel = DecisionTreeClassifier()\nmodel.fit(X, y)\nimportance = dict(zip(X.columns, model.feature_importances_))\n\n# Make predictions\nprobs = model.predict_proba(X)[:, 1]"
-    },
-    {
-       "number": 15,
-       "duration": 180,
-       "statement": "A real estate analysis team wants to improve their house price predictions by considering non-linear relationships. They believe the relationship between square footage and price might be polynomial.\n| square_feet |\n| --- |\n| 1000 |\n| 1500 |\n| 2000 |",
-       "task": "Generate polynomial features up to degree 2 for square footage",
-       "expected_output": "| square_feet | square_feet^2 |\n| --- | --- |\n| 1000 | 1000000 |\n| 1500 | 2250000 |\n| 2000 | 4000000 |",
-       "typical_answer": "from sklearn.preprocessing import PolynomialFeatures\n\npoly = PolynomialFeatures(degree=2)\nfeatures = poly.fit_transform(df[['square_feet']])[:, 1:]\ndf_poly = pd.DataFrame(features, columns=['square_feet', 'square_feet^2'])"
-    },
-    {
-       "number": 16,
-       "duration": 240,
-       "statement": "A used car dealership wants to build a pricing model that can provide price predictions with confidence intervals. They have data about various car features including mileage, year, and engine size.",
-       "task": "Select important features for car price prediction and implement a model that provides predictions with confidence intervals",
-       "expected_output": "Feature importance:\n{\n    'mileage': 0.4,\n    'year': 0.35,\n    'engine_size': 0.25\n}\n\nPredictions:\n| predicted_price | confidence_lower | confidence_upper |\n| --- | --- | --- |\n| 15000 | 14000 | 16000 |\n| 22000 | 21000 | 23000 |",
-       "typical_answer": "# Get feature importance\nrf = RandomForestRegressor(n_estimators=100)\nrf.fit(X, y)\nimportance = dict(zip(X.columns, rf.feature_importances_))\n\n# Get predictions and intervals\npreds = rf.predict(X)\nintervals = np.percentile([tree.predict(X) for tree in rf.estimators_], [2.5, 97.5], axis=0)"
-    },
-    {
-       "number": 17,
-       "duration": 200,
-       "statement": "A retail company wants to segment their customers based on purchasing behavior across different product categories. They need to determine the optimal number of customer segments and assign customers to these segments.",
-       "task": "Use the elbow method to find the optimal number of clusters and assign customers to appropriate segments",
-       "expected_output": "Optimal clusters:\n{\n    'optimal_k': 3,\n    'inertia_scores': [1000, 500, 200, 150, 120]\n}\n\nCustomer segments:\n| customer_id | cluster | spending_level |\n| --- | --- | --- |\n| 1 | 0 | 'high' |\n| 2 | 1 | 'medium' |\n| 3 | 0 | 'high' |",
-       "typical_answer": "# Find optimal k\ninertias = [KMeans(n_clusters=k).fit(X).inertia_ for k in range(1, 6)]\n\n# Assign clusters\nkmeans = KMeans(n_clusters=3)\ndf['cluster'] = kmeans.fit_predict(X)\ndf['spending_level'] = df['cluster'].map({0: 'high', 1: 'medium', 2: 'low'})"
-    },
-    {
-       "number": 18,
-       "duration": 180,
-       "statement": "A data scientist working with high-dimensional customer behavior data needs to reduce the dimensionality while preserving the most important patterns. They want to use PCA to achieve this reduction.",
-       "task": "Calculate the explained variance ratio for principal components and transform the data to the reduced dimensional space",
-       "expected_output": "Variance explained:\n{\n    'PC1_variance': 0.75,\n    'PC2_variance': 0.20,\n    'total_explained': 0.95\n}\n\nTransformed data:\n| PC1 | PC2 |\n| --- | --- |\n| 1.2 | -0.5 |\n| 0.8 | 0.3 |\n| -1.0 | 0.2 |",
-       "typical_answer": "# Calculate variance explained\npca = PCA(n_components=2)\npca.fit(X)\nvariance_ratios = pca.explained_variance_ratio_\n\n# Transform data\npca_transformed = pca.transform(X)\ndf_pca = pd.DataFrame(pca_transformed, columns=['PC1', 'PC2'])"
-    },
-    {
-       "number": 19,
-       "duration": 190,
-       "statement": "A housing price prediction team wants to use regularized regression to prevent overfitting in their model. They need to select the optimal regularization strength and understand the reliability of their feature coefficients.",
-       "task": "Select the best alpha parameter for Ridge regression and calculate feature coefficients with confidence intervals",
-       "expected_output": "Alpha selection:\n{\n    'best_alpha': 1.0,\n    'cv_scores': [0.85, 0.87, 0.86]\n}\n\nFeature coefficients:\n{\n    'bedrooms': {'coef': 0.5, 'std': 0.1},\n    'bathrooms': {'coef': 0.3, 'std': 0.05},\n    'square_feet': {'coef': 0.8, 'std': 0.15}\n}",
-       "typical_answer": "# Find best alpha\nridge_cv = RidgeCV(alphas=[0.1, 1.0, 10.0], cv=5)\nridge_cv.fit(X, y)\n\n# Get coefficients\nridge = Ridge(alpha=ridge_cv.alpha_)\ncoefs = pd.Series(ridge.fit(X, y).coef_, index=X.columns)"
-    },
-    {
-       "number": 20,
-       "duration": 170,
-       "statement": "A classification team needs to optimize their K-Nearest Neighbors model for a customer categorization task. They need to find the optimal number of neighbors and evaluate model performance across different k values.",
-       "task": "Perform cross-validation for different k values and select the best model configuration",
-       "expected_output": "Cross-validation results:\n{\n    'k_values': [1, 2, 3, 4, 5],\n    'cv_scores': [0.85, 0.87, 0.90, 0.88, 0.86]\n}\n\nBest model:\n{\n    'best_k': 3,\n    'best_score': 0.90,\n    'validation_score': 0.89\n}",
-       "typical_answer": "# Get CV scores for different k\nscores = []\nfor k in range(1, 6):\n    knn = KNeighborsClassifier(n_neighbors=k)\n    scores.append(cross_val_score(knn, X, y, cv=5).mean())\n\n# Find best k\ngrid_search = GridSearchCV(KNeighborsClassifier(), \n                         {'n_neighbors': range(1, 11)}, \n                         cv=5)\ngrid_search.fit(X, y)\nbest_k = grid_search.best_params_['n_neighbors']"
-    }
- ]
+   {
+      "number": 12,
+      "duration": 60,
+      "statement": "A data quality team at an e-commerce platform needs to identify and handle price outliers.",
+      "task": "Calculate Q1, Q3",
+      "expected_output": "Q1: 110\nQ3: 575\n",
+      "typical_answer": "Q1 = df['price'].quantile(0.25),\nQ3 = df['price'].quantile(0.75),\n"
+   },
+   {
+      "number": 13,
+      "duration": 60,
+      "statement": "The data quality team still needs to identify and handle price outliers.",
+      "task": "Calculate the IQR for price outlier detection",
+      "expected_output": "IQR: 465\n",
+      "typical_answer": "IQR = df['price'].quantile(0.75) - df['price'].quantile(0.25)"
+   },
+   {
+      "number": 14,
+      "duration": 50,
+      "statement": "A financial analyst needs to understand stock price distribution characteristics.",
+      "task": "Calculate mean of price distribution",
+      "expected_output": "Mean: 150.0",
+      "typical_answer": "mean = df['price'].mean()\n"
+   },
+   {
+      "number": 15,
+      "duration": 50,
+      "statement": "The financial analyst needs to understand stock price distribution characteristics.",
+      "task": "Calculate skewness of price distribution",
+      "expected_output": "Skewness: 0.75",
+      "typical_answer": "skewness': df['price'].skew()"
+   },
+   {
+      "number": 16,
+      "duration": 50,
+      "statement": "The financial analyst needs to understand stock price distribution characteristics.",
+      "task": "Find if the distribution is right-skewed or left skewed",
+      "expected_output": "Distribution: right-skewed",
+      "typical_answer": "distribution_type = 'right-skewed' if df['price'].skew() > 0 else 'left-skewed'\n}"
+   },
+   {
+      "number": 17,
+      "duration": 50,
+      "statement": "A bank wants to automate loan approval using machine learning.",
+      "task": "First train a dicision tree model",
+      "expected_output": "Dicision tree model trained with the given training data.",
+      "typical_answer": "DecisionTreeClassifier().fit(X, y)"
+   },
+   {
+      "number": 18,
+      "duration": 80,
+      "statement": "A bank wants to automate loan approval using machine learning.",
+      "task": "Calculate feature importances",
+      "expected_output": "Income Importance: 0.45\nCredit Score Importance: 0.35\nEmployment Years Importance: 0.20",
+      "typical_answer": "importance = dict(zip(X.columns, model.feature_importances_))"
+   },
+   {
+      "number": 19,
+      "duration": 60,
+      "statement": "A bank wants to automate loan approval using machine learning.",
+      "task": "Generate probability predictions",
+      "expected_output": "Approval Probabilities: [0.75, 0.45, 0.90]",
+      "typical_answer": "probs = model.predict_proba(X_scaled)[:, 1]"
+   },
+   {
+      "number": 20,
+      "duration": 40,
+      "statement": "A used car dealership wants to build a pricing model with confidence intervals.",
+      "task": " First Perform train-test split",
+      "expected_output": "Training set size: 80%\nTesting set size: 20%",
+      "typical_answer": "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)"
+   },
+   {
+      "number": 21,
+      "duration": 50,
+      "statement": "A used car dealership wants to build a pricing model with confidence intervals.",
+      "task": "Second Fit random forest model",
+      "expected_output": "Model Training Complete\nNumber of Estimators: 100",
+      "typical_answer": "RandomForestRegressor(n_estimators=100).fit(X_train, y_train)"
+   },
+   {
+      "number": 22,
+      "duration": 40,
+      "statement": "A used car dealership wants to build a pricing model with confidence intervals.",
+      "task": "Extract feature importance values",
+      "expected_output": "Mileage Importance: 0.4\nYear Importance: 0.35\nEngine Size Importance: 0.25",
+      "typical_answer": "importance = dict(zip(X.columns, rf.feature_importances_))"
+   },
+   {
+      "number": 23,
+      "duration": 60,
+      "statement": "A used car dealership wants to build a pricing model with confidence intervals.",
+      "task": "Predict prices",
+      "expected_output": "Predicted Price: 15000",
+      "typical_answer": "preds = rf.predict(X_test)"
+   },
+   {
+      "number": 24,
+      "duration": 70,
+      "statement": "A used car dealership wants to build a pricing model with confidence intervals.",
+      "task": "Generate individual predictions for each decision tree in the random forest to create an ensemble of predictions",
+      "expected_output": "Number of Trees: 100",
+      "typical_answer": "tree_predictions = [tree.predict(X_test) for tree in rf.estimators_]"
+   },
+   {
+      "number": 25,
+      "duration": 70,
+      "statement": "A used car dealership wants to build a pricing model with confidence intervals.",
+      "task": "Use numpy percentile function to compute lower and upper bounds, representing the 2.5th and 97.5th percentiles of predictions to create a 95% confidence interval",
+      "expected_output": "Confidence Interval: [14000, 16000]",
+      "typical_answer": "intervals = np.percentile(tree_predictions, [2.5, 97.5], axis=0)"
+   },
+   {
+      "number": 26,
+      "duration": 30,
+      "statement": "A classification team needs to optimize K-Nearest Neighbors model.",
+      "task": "Initialize KNN classifier with specific k value",
+      "expected_output": "Classifier Created: k=3",
+      "typical_answer": "knn = KNeighborsClassifier(n_neighbors=3)"
+   },
+   {
+      "number": 27,
+      "duration": 50,
+      "statement": "A classification team needs to optimize K-Nearest Neighbors model.",
+      "task": "Calculate average cross-validation score for current k",
+      "expected_output": "CV Score: 0.90",
+      "typical_answer": "score = cross_val_score(knn, X, y, cv=5).mean()"
+   },
+   {
+      "number": 28,
+      "duration": 60,
+      "statement": "A classification team needs to optimize K-Nearest Neighbors model.",
+      "task": "Use GridSearchCV to determine best number of neighbors",
+      "expected_output": "Best K: 3\nBest Score: 0.90",
+      "typical_answer": "best_k = GridSearchCV(KNeighborsClassifier(), {'n_neighbors': range(1, 11)}, cv=5).fit(X, y).best_params_['n_neighbors']"
+   }
+]
