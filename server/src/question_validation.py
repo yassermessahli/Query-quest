@@ -10,11 +10,10 @@ from pathlib import Path
 class LLMConfig:
     """Configuration for LLM parameters"""
     model: str = "gpt-4o-mini"  # Updated to a more recent model
-    temperature: float = 0.2
+    temperature: float = 0.5
     max_tokens: int = 1
     max_retries: int = 5
-    personality: str = """You are an expert in data science and Python programming with extensive 
-    experience in code review. Your task is to evaluate Python code solutions for data science 
+    personality: str = """You are an expert in data science and Python programming. Your task is to evaluate Python code solutions for data science 
     challenges. You must respond ONLY with 'True' for correct solutions or 'False' for incorrect ones, 
     considering both syntax and logical correctness."""
 
@@ -40,7 +39,7 @@ class LLMChecker:
     def _setup_prompt(self, question, answer: str) -> str:
         """Prepare the prompt for the LLM"""
         return f"""
-        Evaluate this data science solution. Respond ONLY with 'True' or 'False'.
+        Evaluate this data science solution of the user. Respond ONLY with 'True' or 'False'.
         
         CHALLENGE DETAILS:
         Statement: {question.statement}
@@ -50,14 +49,7 @@ class LLMChecker:
         SUBMITTED SOLUTION:
         {answer}
         
-        Reference Solution (for context only):
-        {question.typical_answer}
-        
-        Evaluation Criteria:
-        1. Code must be syntactically correct Python
-        2. Solution must solve the given task logically
-        
-        Respond only with 'True' if ALL criteria are met, 'False' otherwise.
+        Respond only with 'True' or 'False'. you can accept the code if the syntax error is too small
         """
 
     def _validate_question(self, question) -> None:
