@@ -137,10 +137,11 @@ def check_answer(request, id: str):
             )
 
         question = team.question
-        if answer is None:
-            result = False
-        else:
+        if answer:
             result = utils.validate_answer(question, answer)
+        else:
+            result = False
+            
         
         if result:
             
