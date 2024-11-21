@@ -163,8 +163,12 @@ def check_answer(request, id: str):
                 }, status=status.HTTP_200_OK)           
 
         else:
-            flag = utils.ontime_flag(team.code, question.number-1)
-            score = Question.objects.get(number=question.number-1)
+            question_number = question.number
+            if question_number != 1:
+                question_number -= 1
+                
+            flag = utils.ontime_flag(team.code, question_number)
+            score = Question.objects.get(number=question_number)
 
             history = History(team=team, score=score, flag=flag)
             history.save()
@@ -224,5 +228,4 @@ def get_status(request):
             {'error': str(e)}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-    
     

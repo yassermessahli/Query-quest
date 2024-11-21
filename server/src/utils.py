@@ -22,20 +22,16 @@ def ontime_flag(team: str, question: int) -> str:
     Returns:
         str: Generated flag in format: 32-characters long hexadecimal string
     """
+    
+    secret = Question.objects.get(number=question).secret
+    # Combine team_code and secret_key
+    data = team + secret
 
-    try:
-        secret = Question.objects.get(number=question).secret
-        # Combine team_code and secret_key
-        data = team + secret
-    
-        # Generate hash using SHA-256
-        hash_object = hashlib.sha256(data.encode())
-        flag = hash_object.hexdigest()[:32]  # Take first 32 chars for medium-length flag
-    
-        return flag
-        
-    except Question.DoesNotExist:    
-        raise ValueError(f"Invalid question ID: {question}")
+    # Generate hash using SHA-256
+    hash_object = hashlib.sha256(data.encode())
+    flag = hash_object.hexdigest()[:32]  # Take first 32 chars for medium-length flag
+
+    return flag
     
 
 

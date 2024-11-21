@@ -1,0 +1,10 @@
+[
+    {
+        "number": 2,
+        "duration": 180,
+        "statement": "A retail company wants to **visualize** their sales performance across different product categories. They have collected `sales data` over `time` and want to understand the total sales for each category.\n| category | sales |\n| --- | --- |\n| A | 100 |\n| A | 200 |\n| B | 150 |",
+        "task": "Group and sum sales by category, then create a bar plot of the aggregated sales",
+        "expected_output": "    category sales\n0          A   300\n1          B   150\nAlong with a bar plot showing total sales for each category",
+        "typical_answer": "agg_df = df.groupby('category')['sales'].sum().reset_index()\nsns.barplot(x='category', y='sales', data=agg_df)"
+    }
+]

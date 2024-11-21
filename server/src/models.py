@@ -74,7 +74,7 @@ class History(models.Model):
         related_name='question_history',
         db_constraint=False
     )
-    flag = models.CharField(max_length=32, unique=True)
+    flag = models.CharField(max_length=32, unique=False)
     
     class Meta:
         db_table = 'app_history_table'
