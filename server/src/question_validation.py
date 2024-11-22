@@ -10,12 +10,11 @@ from pathlib import Path
 class LLMConfig:
     """Configuration for LLM parameters"""
     model: str = "gpt-4o-mini"  # Updated to a more recent model
-    temperature: float = 0.5
+    temperature: float = 0.7
     max_tokens: int = 1
     max_retries: int = 5
-    personality: str = """You are an expert in data science and Python programming. Your task is to evaluate Python code solutions for data science 
-    challenges. You must respond ONLY with 'True' for correct solutions or 'False' for incorrect ones, 
-    considering both syntax and logical correctness."""
+    personality: str = """You are an assisstant in data science and Python programming. Your task is to evaluate Python code solutions for data science 
+    challenges. You must respond ONLY with 'True' for correct or almost correct solutions or 'False' otherwise"""
 
 class LLMResponseError(Exception):
     """Custom exception for LLM response errors"""
@@ -31,7 +30,7 @@ class LLMChecker:
         self.config = config or LLMConfig()
         # # REMOVE THIS BELOW IN PRODUCTION!!!!!
         # AND ADD THIS INSTEAD!
-        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_key = "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"
         if not self.api_key:
             raise ValueError("OpenAI API key not found in environment variables")
         self.agent = OpenAI(api_key=self.api_key)
@@ -39,19 +38,17 @@ class LLMChecker:
     def _setup_prompt(self, question, answer: str) -> str:
         """Prepare the prompt for the LLM"""
         return f"""
-        Evaluate this data science solution of the user. Respond ONLY with 'True' or 'False'.
-        
+        Respond ONLY with 'True' or 'False'.
+        Give the submitted response rate of correctness. if the rate is higher than 0.7, then the response is correct `True` otherwise `False`.
+        NOTE: You can accept the code if the syntax error is small. do not be strict, consider the user's effort and the logic behind the code.
+
         CHALLENGE DETAILS:
-        Statement: {question.statement}
-        Task: {question.task}
-        Expected Output Format: {question.exp_output}
+        {question.statement}
+        {question.task}
+        Example Output: {question.exp_output}
         
-        SUBMITTED SOLUTION:
+        SUBMITTED SOLUTION (FOCUS ON THE CODE LINE ONLY):
         {answer}
-        
-        ===========
-        Respond only with 'True' or 'False'. you can accept the code if the syntax error is small
-        NOTE: do not be that strict, consider the user's effort and the logic behind the code.
         """
 
     def _validate_question(self, question) -> None:
