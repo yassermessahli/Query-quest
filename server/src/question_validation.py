@@ -23,14 +23,12 @@ class LLMResponseError(Exception):
 class LLMChecker:
     
     DOT_ENV_PATH = Path(__file__).resolve().parent.parent / '.env'
-    
     def __init__(self, config: Optional[LLMConfig] = None):
         """Initialize the LLM checker with configuration"""
         load_dotenv()
         self.config = config or LLMConfig()
-        # # REMOVE THIS BELOW IN PRODUCTION!!!!!
-        # AND ADD THIS INSTEAD!
-        self.api_key = "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"
+        self.api_key = os.getenv('OPENAI_API_KEY')
+        print(self.api_key)
         if not self.api_key:
             raise ValueError("OpenAI API key not found in environment variables")
         self.agent = OpenAI(api_key=self.api_key)

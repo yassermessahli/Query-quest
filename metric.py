@@ -34,40 +34,9 @@ def score(solution: pd.DataFrame, submission: pd.DataFrame, row_id_column_name: 
     '''
     
     QUESTION_NUMBER = 30
-    QUESTIONS_SECRETS = {
-        1: "07aos1rm",
-        2: "nira5k6p", 
-        3: "ykj4xylq",
-        4: "ie1dtuwg",
-        5: "542dmc2b",
-        6: "2h33udhn",
-        7: "oljf3yln",
-        8: "450mjlkt",
-        9: "jg1ph9an",
-        10: "4g87t2db",
-        11: "i59bn62y", 
-        12: "c9bdckta",
-        13: "a0314yki",
-        14: "1mm2xv33",
-        15: "39fv7f9k",
-        16: "va5w0hoy",
-        17: "h32coht6",
-        18: "y45s24f7",
-        19: "13e59ezx",
-        20: "7589fa3h",
-        21: "3e5d8kze",
-        22: "862oblna",
-        23: "ihz31mkl",
-        24: "4nq0w65c",
-        25: "l9cltd21",
-        26: "nvgxd5nx",
-        27: "oowgh1bi",
-        28: "glelenqp",
-        29: "urggxk2m",
-        30: "a9rkxn54"
-    }
+    QUESTIONS_SECRETS = {}
     
-    for q in range(QUESTION_NUMBER):
+    for q in range(1, QUESTION_NUMBER+1):
         secret = QUESTIONS_SECRETS[q]
         data = str(submission["team_code"]) + str(secret)
         hash_object = hashlib.sha256(data.encode())
