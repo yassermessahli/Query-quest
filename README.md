@@ -2,7 +2,7 @@
 
 A battle royale-themed data science challenge platform where participants solve timed coding questions to earn flags and progress through levels.
 
-![Query Quest Banner](./static/images/Question.png)
+![Query Quest Banner](https://github.com/yassermessahli/Query-quest/blob/main/static/images/Question.PNG)
 
 ## 🎯 Overview
 
