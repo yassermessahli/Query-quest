@@ -1,3 +1,19 @@
+"""
+Database Population Tool for Assessment Platform
+A command-line utility to populate a MySQL database with questions and teams for a DataCamp-like assessment website. Reads data from JSON files and
+inserts it into the appropriate database tables.
+
+Usage:
+    python db_pop.py -q questions.json -t teams.json
+Arguments:
+    -q, --questions: Path to JSON file with question data
+    -t, --teams: Path to JSON file with team data
+    --dry-run: Validate data without database insertion
+    --clear-existing: Clear existing data before insertion
+Environment:
+    Requires a `.env` file in the server directory with database credentials (DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)
+"""
+
 from mysql import connector
 from datetime import datetime
 from dotenv import load_dotenv
@@ -7,6 +23,7 @@ import sys
 import random
 import string
 import os
+import logging
 
 
 
@@ -19,7 +36,7 @@ def getid(way: str = 'M'):
     if way == 'D':
         characters = string.digits
     elif way == 'C':
-        caracters = string.ascii_lowercase + string.ascii_uppercase
+        characters = string.ascii_lowercase + string.ascii_uppercase
     elif way == 'M':
         characters = string.digits + string.ascii_lowercase
     else:
@@ -30,23 +47,51 @@ def getid(way: str = 'M'):
 
 def connect_to_database():
     """Establish connection to MySQL database"""
-    load_dotenv(DOT_ENV_PATH)
-    connection = connector.connect(
-        host=os.getenv('DB_HOST'),
-        port=os.getenv('DB_PORT'),
-        user=os.getenv('DB_USER'),
-        password=os.getenv('DB_PASSWORD'),
-        database=os.getenv('DB_NAME'),
-        # Enable SSL connection
-        ssl_ca=os.getenv('DB_SSL_CA'),
-    )
-    return connection
+    try:
+        load_dotenv(DOT_ENV_PATH)
+        required_vars = ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME']
+        missing_vars = [var for var in required_vars if not os.getenv(var)]
+        
+        if missing_vars:
+            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+            
+        connection = connector.connect(
+            host=os.getenv('DB_HOST'),
+            port=os.getenv('DB_PORT'),
+            user=os.getenv('DB_USER'),
+            password=os.getenv('DB_PASSWORD'),
+            database=os.getenv('DB_NAME'),
+            # Enable SSL connection
+            ssl_ca=os.getenv('DB_SSL_CA'),
+        )
+        return connection
+    except connector.Error as err:
+        print(f"Database connection error: {err}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        sys.exit(1)
 
 
 def load_json_file(file_path):
     """Load and parse JSON file"""
     with open(file_path, 'r') as file:
         return json.load(file)
+
+def validate_question(question):
+    """Validate question data"""
+    required_fields = ['statement', 'task']
+    for field in required_fields:
+        if not question.get(field):
+            return False, f"Missing required field: {field}"
+    return True, None
+
+def question_exists(cursor, question_id):
+    """Check if a question with the given ID already exists"""
+    query = "SELECT COUNT(*) FROM app_question_table WHERE id = %s"
+    cursor.execute(query, (question_id,))
+    count = cursor.fetchone()[0]
+    return count > 0
 
 def insert_questions(cursor, questions_data):
     """Insert questions into the database"""
@@ -59,10 +104,25 @@ def insert_questions(cursor, questions_data):
     
     current_time = datetime.now()
     
+    inserted_count = 0
+    skipped_count = 0
+    
     for question in questions_data:
+        is_valid, error_msg = validate_question(question)
+        if not is_valid:
+            print(f"Skipping invalid question: {error_msg}")
+            continue
+            
+        question_id = question.get('id', getid())
+        
+        if question_exists(cursor, question_id):
+            logging.warning(f"Question with ID {question_id} already exists. Skipping.")
+            skipped_count += 1
+            continue
+            
         values = (
             question.get('number', None),  # default NULL if not specified
-            question.get('id', getid()),  # empty string if not specified
+            question_id,
             question.get('secret', getid('D')),  # empty string if not specified
             question.get('duration', 120),  # default 120 if not specified
             question.get('statement', ''),
@@ -73,6 +133,9 @@ def insert_questions(cursor, questions_data):
             current_time
         )
         cursor.execute(question_query, values)
+        inserted_count += 1
+    
+    logging.info(f"Questions inserted: {inserted_count}, skipped: {skipped_count}")
 
 def insert_teams(cursor, teams_data):
     """Insert teams into the database"""
@@ -99,11 +162,24 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Populate database with questions and/or teams from JSON files')
     parser.add_argument('-q', '--questions', help='Path to questions JSON file', type=str)
     parser.add_argument('-t', '--teams', help='Path to teams JSON file', type=str)
-    args = parser.parse_args()
-    return args
+    parser.add_argument('--dry-run', action='store_true', help='Validate data without inserting into database')
+    parser.add_argument('--clear-existing', action='store_true', help='Clear existing data before insertion')
+    return parser.parse_args()
 
+def setup_logging():
+    """Set up logging configuration"""
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler("db_population.log"),
+            logging.StreamHandler()
+        ]
+    )
 
 def main():
+    setup_logging()
+    logging.info("Starting database population")
     # Parse command-line arguments
     args = parse_arguments()
 
@@ -129,10 +205,10 @@ def main():
         
         # Commit changes
         connection.commit()
-        print("Database population completed successfully!")
+        logging.info("Database population completed successfully!")
         
     except connector.Error as err:
-        print(f"An error occurred: {err}")
+        logging.error(f"Database error occurred: {err}")
         connection.rollback()
         
     finally:
