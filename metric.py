@@ -8,7 +8,6 @@ Your metric must satisfy the following constraints:
 - score must return a single, finite, non-null float.
 """
 import pandas as pd
-import pandas.api.types
 import hashlib
 
 class ParticipantVisibleError(Exception):

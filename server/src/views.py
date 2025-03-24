@@ -2,13 +2,9 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
-from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.pagination import PageNumberPagination
 
 from .models import Team, Question, History
 from .authentication import SingleSessionAuthentication, generate_token
-from .serializers import TeamSerializer, QuestionSerializer, HistorySerializer
 from . import utils
 
 import re

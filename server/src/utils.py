@@ -3,10 +3,6 @@ import hashlib
 from .models import Question
 from .question_validation import LLMChecker
 
-from openai import OpenAI
-import os
-from dotenv import load_dotenv
-
 
 def validate_answer(question, answer: str) -> bool:
     return LLMChecker().check_with_llm(question, answer)
