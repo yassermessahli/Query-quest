@@ -4,7 +4,7 @@ A battle royale-themed data science challenge platform where participants solve 
 
 ![Query Quest Banner](https://github.com/yassermessahli/Query-quest/blob/main/static/images/Question.PNG)
 
-## 🎯 Overview
+## Overview
 
 Query Quest is a web-based platform that combines data science education with competitive gaming elements. Participants face timed challenges, solve data science problems, and collect unique flags to track their progress.
 
@@ -15,13 +15,13 @@ Query Quest is a web-based platform that combines data science education with co
 - Multiple difficulty levels (Beginner, Medium, Advanced)
 - Battle royale themed interface
 
-## 🛠️ Tech Stac
+## Tech Stac
 - Django REST Framework
 - MySQL Database
 - OpenAI Integration for answer validation
 - Token Authentication
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 project/
@@ -34,36 +34,28 @@ project/
     └── advanced/
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Python 3.11+
 - Node.js 18+
 - MySQL
 
-### Setup
+### Setup (development environment)
 ```sh
-cd server
-python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-pip install -r requirements.txt
+cd <directory>
+pip install poetry
+poetry install
 python manage.py migrate
 python manage.py runserver
 ```
 
 ### Environment Variables
-Create a `.env` file in the server directory:
-```
-DB_NAME=database_name
-DB_USER=user_name
-DB_PASSWORD=user_password
-DB_HOST=database_host
-DB_PORT=port
-DB_SSL_CA=path_to_CA_certificate
-OPENAI_API_KEY=your_api_key
-```
+Create a `.env` file in the main directory similar to .env.example
 
-## 🔒 Security Features
+## Features
+
+### Security Features
 
 - Single session authentication
 - Unique team tokens
@@ -71,22 +63,16 @@ OPENAI_API_KEY=your_api_key
 - Rate limiting on submissions
 - SSL/TLS encryption
 
-## 📝 API Documentation
+### API Documentation
 
-### Key Endpoints
+#### Key Endpoints
 - `/api/login/` - Team authentication
 - `/api/question/<id>/` - Get question details
 - `/api/question/<id>/check/` - Submit & validate answers
 - `/api/status/` - Get team progress
 
-## 🤝 Contributing
+### Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (
-
-git commit -m 'Add some AmazingFeature'
-
-)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+3. Open a Pull Request
