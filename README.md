@@ -1,45 +1,45 @@
-# Query Quest
+# 🧩 QueryQuest  
+> **Play Data Science! — Gamified challenges for aspiring data scientists.**
 
-A battle royale-themed data science challenge platform where participants solve timed coding questions to earn flags and progress through levels.
+QueryQuest is a **battle royale–themed data science challenge platform** that blends learning with competition. Participants solve **timed coding problems**, capture **unique flags**, and advance through levels — making data science both engaging and practical.
+
+<br>
 
 ![Query Quest Banner](https://github.com/yassermessahli/Query-quest/blob/main/static/images/Question.PNG)
 
-## Overview
+### 💠 Key Features
+- Timed coding challenges  
+- Progress tracking with unique flags  
+- Secure authentication system  
+- Multiple difficulty levels (Beginner → Advanced)  
+- Battle royale–themed interface  
 
-Query Quest is a web-based platform that combines data science education with competitive gaming elements. Participants face timed challenges, solve data science problems, and collect unique flags to track their progress.
+### 🛠 Tech Stack
+- **Backend:** Django REST Framework  
+- **Database:** MySQL  
+- **Validation:** OpenAI integration for answer checking  
+- **Auth:** Token-based authentication  
 
-### Key Features
-- Timed coding challenges
-- Progress tracking with unique flags
-- Secure authentication system
-- Multiple difficulty levels (Beginner, Medium, Advanced)
-- Battle royale themed interface
-
-## Tech Stac
-- Django REST Framework
-- MySQL Database
-- OpenAI Integration for answer validation
-- Token Authentication
-
-## Architecture
-
+### 📦 Architecture
 ```
+
 project/
 ├── server/              # Django backend
 │   ├── src/
 │   ├── config/
 │   └── ...
-└── data/               # Challenge questions
-    ├── questions/
-    └── advanced/
-```
+└── data/                # Challenge questions
+├── questions/
+└── advanced/
 
-## Getting Started
+````
+
+## ⚡ Getting Started
 
 ### Prerequisites
-- Python 3.11+
-- Node.js 18+
-- MySQL
+- Python 3.11+  
+- Node.js 18+  
+- MySQL  
 
 ### Setup (development environment)
 ```sh
@@ -48,31 +48,32 @@ pip install poetry
 poetry install
 python manage.py migrate
 python manage.py runserver
-```
+````
 
 ### Environment Variables
-Create a `.env` file in the main directory similar to .env.example
 
-## Features
+Create a `.env` file in the project root based on `.env.example`.
 
-### Security Features
+## ⚙️ Security Features
 
-- Single session authentication
-- Unique team tokens
-- Secure flag generation algorithm
-- Rate limiting on submissions
-- SSL/TLS encryption
+* Single-session authentication
+* Unique team tokens
+* Secure flag generation algorithm
+* Rate limiting on submissions
+* SSL/TLS encryption
 
-### API Documentation
+### 💠 API Documentation
 
-#### Key Endpoints
-- `/api/login/` - Team authentication
-- `/api/question/<id>/` - Get question details
-- `/api/question/<id>/check/` - Submit & validate answers
-- `/api/status/` - Get team progress
+### Key Endpoints
 
-### Contributing
+* `POST /api/login/` → Team authentication
+* `GET /api/question/<id>/` → Retrieve question details
+* `POST /api/question/<id>/check/` → Submit & validate answers
+* `GET /api/status/` → Check team progress
+
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Open a Pull Request
+3. Commit changes and push
+4. Open a Pull Request
