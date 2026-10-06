@@ -1,9 +1,9 @@
-from typing import Optional
-from openai import OpenAI
-from dotenv import load_dotenv
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
 from pathlib import Path
+
+from dotenv import load_dotenv
+from openai import OpenAI
 
 
 @dataclass
@@ -13,7 +13,7 @@ class LLMConfig:
     temperature: float = 0.7
     max_tokens: int = 1
     max_retries: int = 5
-    personality: str = """You are an assisstant in data science and Python programming. Your task is to evaluate Python code solutions for data science 
+    personality: str = """You are an assisstant in data science and Python programming. Your task is to evaluate Python code solutions for data science
     challenges. You must respond ONLY with 'True' for correct or almost correct solutions or 'False' otherwise"""
 
 class LLMResponseError(Exception):
@@ -21,9 +21,9 @@ class LLMResponseError(Exception):
     pass
 
 class LLMChecker:
-    
+
     DOT_ENV_PATH = Path(__file__).resolve().parent.parent / '.env'
-    def __init__(self, config: Optional[LLMConfig] = None):
+    def __init__(self, config: LLMConfig | None = None):
         """Initialize the LLM checker with configuration"""
         load_dotenv()
         self.config = config or LLMConfig()
@@ -44,7 +44,7 @@ class LLMChecker:
         {question.statement}
         {question.task}
         Example Output: {question.exp_output}
-        
+
         SUBMITTED SOLUTION (FOCUS ON THE CODE LINE ONLY):
         {answer}
         """
@@ -69,12 +69,12 @@ class LLMChecker:
                 temperature=self.config.temperature
             )
             response_content = response.choices[0].message.content.strip().lower()
-            
+
             if response_content not in ['true', 'false']:
                 raise LLMResponseError(f"Invalid response format: {response_content}")
-            
+
             return response_content == 'true'
-            
+
         except Exception as e:
             raise LLMResponseError(f"Error from Language Model: {e}")
 
@@ -84,11 +84,11 @@ class LLMChecker:
     def check_with_llm(self, question, answer: str) -> bool:
         """
         Check if the answer is correct using LLM.
-        
+
         Args:
             question (Question): Question object
             answer (str): Answer provided by the team
-            
+
         Returns:
             Tuple[bool, dict]: (is_correct, metadata)
         """
@@ -100,7 +100,7 @@ class LLMChecker:
             prompt = self._setup_prompt(question, answer)
             result = self._get_llm_response(prompt)
             return result
-        
+
         except Exception as e:
             raise e
 

@@ -1,6 +1,8 @@
 # authentication.py
-from rest_framework import authentication, exceptions
 import secrets
+
+from rest_framework import authentication, exceptions
+
 from .models import Team
 
 

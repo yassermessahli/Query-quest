@@ -10,10 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from pathlib import Path
 import os
-from dotenv import load_dotenv
+from pathlib import Path
 
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,7 +35,7 @@ ALLOWED_HOSTS = ['*']
 
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-    
+
 
 
 # Application definition
@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'src',
+    'main',
 ]
 
 MIDDLEWARE = [
@@ -107,25 +107,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # refere to the .env.example file to see the architecture of the .env file and then create your own .env file.
 load_dotenv()
 
+# SSL: when a CA certificate is given (path relative to the server/ directory), verify the server's
+# certificate and hostname (`verify-full`); otherwise use SSL only if the server offers it (`prefer`).
+# Either default can be overridden with DB_SSLMODE (disable, prefer, require, verify-ca, verify-full).
+# DB_SSL_CA = os.getenv('DB_SSL_CA')
+# DB_OPTIONS = {
+#     'sslmode': os.getenv('DB_SSLMODE', 'verify-full' if DB_SSL_CA else 'prefer'),
+# }
+# if DB_SSL_CA:
+#     DB_OPTIONS['sslrootcert'] = str(BASE_DIR / DB_SSL_CA)
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-        'OPTIONS': {
-            'ssl': {  # My cloud service requires SSL connection for security
-                'ca': os.path.join(BASE_DIR, os.getenv('DB_SSL_CA')),  # path to SSL CA certificate
-                'ssl_mode': 'VERIFY_IDENTITY',  
-            }
-        }
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
 
-# for django rest framework 
+# for django rest framework
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -140,7 +144,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5,  # Adjust the page size as needed
-    
+
 }
 
 

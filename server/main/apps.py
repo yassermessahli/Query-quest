@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SrcConfig(AppConfig):
+class MainConfig(AppConfig):
     default_auto_field = 'django.db.models.AutoField'
-    name = 'src'
+    name = 'main'
